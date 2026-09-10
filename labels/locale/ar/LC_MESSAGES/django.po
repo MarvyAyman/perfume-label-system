@@ -1,0 +1,320 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: perfume-labels 1.0\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5);\n"
+
+msgid "Perfume Label System"
+msgstr "نظام ملصقات العطور"
+
+msgid "Main printing"
+msgstr "الطباعة الرئيسية"
+
+msgid "Products & batches"
+msgstr "المنتجات والدفعات"
+
+msgid "Ingredients"
+msgstr "المكونات"
+
+msgid "Reports & records"
+msgstr "التقارير والسجلات"
+
+msgid "Log out"
+msgstr "تسجيل الخروج"
+
+msgid "Log in"
+msgstr "تسجيل الدخول"
+
+msgid "Sign in to open the printing system."
+msgstr "سجّل الدخول لفتح نظام الطباعة."
+
+msgid "Incorrect username or password."
+msgstr "اسم المستخدم أو كلمة المرور غير صحيحة."
+
+msgid "Username"
+msgstr "اسم المستخدم"
+
+msgid "Password"
+msgstr "كلمة المرور"
+
+msgid "System ready"
+msgstr "النظام جاهز"
+
+msgid "Choose a perfume — its batch and ingredients load automatically."
+msgstr "اختر العطر؛ ستظهر دفعته ومكوناته تلقائيًا."
+
+msgid "Choose perfume & print"
+msgstr "اختيار العطر والطباعة"
+
+msgid "Perfume name"
+msgstr "اسم العطر"
+
+msgid "Type the perfume name…"
+msgstr "اكتب اسم العطر…"
+
+msgid "Oil batch number — automatic"
+msgstr "رقم دفعة الزيت — تلقائي"
+
+msgid "Appears once a perfume is selected"
+msgstr "يظهر بعد اختيار العطر"
+
+msgid "Number of bottles"
+msgstr "عدد الزجاجات"
+
+msgid "Note (optional — prints only under the ingredients label)"
+msgstr "ملاحظة (اختياري — تُطبع فقط أسفل ملصق المكونات)"
+
+msgid "Leave empty for nothing to print here…"
+msgstr "اتركه فارغًا حتى لا يُطبع أي شيء هنا…"
+
+msgid "Pick a registered perfume from the search results. Its current batch number is filled in automatically."
+msgstr "اختر عطرًا مسجلًا من نتائج البحث. سيُملأ رقم دفعته الحالية تلقائيًا."
+
+msgid "Print tracking label"
+msgstr "طباعة ملصق التتبع"
+
+msgid "Print ingredients label"
+msgstr "طباعة ملصق المكونات"
+
+msgid "Printer 1"
+msgstr "الطابعة الأولى"
+
+msgid "Printer 2"
+msgstr "الطابعة الثانية"
+
+msgid "Preview"
+msgstr "المعاينة"
+
+msgid "Ingredients not added yet."
+msgstr "لم تُضف المكونات بعد."
+
+msgid "The preview changes depending on which print button you choose."
+msgstr "تتغير المعاينة حسب زر الطباعة الذي تختاره."
+
+msgid "This perfume today"
+msgstr "هذا العطر اليوم"
+
+msgid "This perfume this month"
+msgstr "هذا العطر هذا الشهر"
+
+msgid "All perfumes today"
+msgstr "كل العطور اليوم"
+
+msgid "All perfumes this month"
+msgstr "كل العطور هذا الشهر"
+
+msgid "Choose a perfume from the search results first."
+msgstr "اختر عطرًا من نتائج البحث أولاً."
+
+msgid "Current batch"
+msgstr "الدفعة الحالية"
+
+msgid "Add each perfume and link it to the current oil batch."
+msgstr "أضف كل عطر واربطه برقم دفعة الزيت الحالية."
+
+msgid "Add a new perfume"
+msgstr "إضافة عطر جديد"
+
+msgid "Edit"
+msgstr "تعديل"
+
+msgid "Save perfume"
+msgstr "حفظ العطر"
+
+msgid "Cancel"
+msgstr "إلغاء"
+
+msgid "Batches"
+msgstr "الدفعات"
+
+msgid "New EZLOT batch number"
+msgstr "رقم دفعة EZLOT جديد"
+
+msgid "Add batch"
+msgstr "إضافة دفعة"
+
+msgid "Active"
+msgstr "نشطة"
+
+msgid "Make active"
+msgstr "تفعيل"
+
+msgid "No batches yet."
+msgstr "لا توجد دفعات بعد."
+
+msgid "Registered perfumes"
+msgstr "العطور المسجلة"
+
+msgid "Disabled"
+msgstr "معطّل"
+
+msgid "Disable"
+msgstr "تعطيل"
+
+msgid "Enable"
+msgstr "تفعيل"
+
+msgid "No products yet."
+msgstr "لا توجد منتجات بعد."
+
+msgid "Disabling a perfume hides it from the print screen but keeps all of its past tracking records."
+msgstr "تعطيل العطر يخفيه من شاشة الطباعة، لكن يحتفظ بجميع سجلات التتبع السابقة."
+
+msgid "Perfume ingredients"
+msgstr "مكونات العطور"
+
+msgid "Keep one current ingredients list per perfume."
+msgstr "احتفظ بقائمة مكونات حالية واحدة لكل عطر."
+
+msgid "Add or edit ingredients"
+msgstr "إضافة أو تعديل المكونات"
+
+msgid "Choose perfume"
+msgstr "اختر العطر"
+
+msgid "Ingredients text as it will be printed"
+msgstr "نص المكونات كما سيُطبع"
+
+msgid "Save ingredients"
+msgstr "حفظ المكونات"
+
+msgid "Choose a perfume above to edit its ingredients."
+msgstr "اختر عطرًا أعلاه لتعديل مكوناته."
+
+msgid "Ingredients label preview"
+msgstr "معاينة ملصق المكونات"
+
+msgid "Enter the legally-approved ingredients list exactly as it should appear on the product file."
+msgstr "أدخل قائمة المكونات المعتمدة قانونيًا كما هي في ملف المنتج."
+
+msgid "All perfumes & their ingredients"
+msgstr "جميع العطور ومكوناتها"
+
+msgid "Edit ingredients"
+msgstr "تعديل المكونات"
+
+msgid "Search permanent tracking records by number, perfume, or batch."
+msgstr "ابحث في سجلات التتبع الدائمة برقم التتبع أو اسم العطر أو رقم الدفعة."
+
+msgid "Bottles today"
+msgstr "زجاجات اليوم"
+
+msgid "Bottles this month"
+msgstr "زجاجات الشهر"
+
+msgid "Perfumes"
+msgstr "العطور"
+
+msgid "Results shown"
+msgstr "النتائج المعروضة"
+
+msgid "Search tracking records"
+msgstr "البحث في سجلات التتبع"
+
+msgid "Download CSV (Excel)"
+msgstr "تنزيل CSV (Excel)"
+
+msgid "Tracking number, perfume name, or EZLOT batch…"
+msgstr "رقم التتبع أو اسم العطر أو رقم دفعة EZLOT…"
+
+msgid "Search"
+msgstr "بحث"
+
+msgid "Tracking number"
+msgstr "رقم التتبع"
+
+msgid "Perfume"
+msgstr "العطر"
+
+msgid "Batch"
+msgstr "الدفعة"
+
+msgid "Print date"
+msgstr "تاريخ الطباعة"
+
+msgid "Reprints"
+msgstr "مرات إعادة الطباعة"
+
+msgid "No matching records."
+msgstr "لا توجد سجلات مطابقة."
+
+msgid "Reprinting an existing tracking label (from this search) never creates a new tracking number."
+msgstr "إعادة طباعة ملصق تتبع موجود (من هذا البحث) لا تُنشئ رقم تتبع جديدًا أبدًا."
+
+msgid "This perfume has no active EZLOT batch yet."
+msgstr "لا يوجد لهذا العطر رقم دفعة EZLOT نشط بعد."
+
+msgid "Add this perfume's ingredients first."
+msgstr "أضف مكونات هذا العطر أولاً."
+
+msgid "Tracking number not found."
+msgstr "رقم التتبع غير موجود."
+
+msgid "Batch number must start with EZLOT."
+msgstr "يجب أن يبدأ رقم الدفعة بـ EZLOT."
+
+msgid "Product saved."
+msgstr "تم حفظ المنتج."
+
+msgid "Batch added."
+msgstr "تمت إضافة الدفعة."
+
+msgid "Active batch updated."
+msgstr "تم تحديث الدفعة النشطة."
+
+msgid "Ingredients saved for %(name)s"
+msgstr "تم حفظ مكونات %(name)s"
+
+msgid "Tracking printer"
+msgstr "طابعة التتبع"
+
+msgid "Ingredients printer"
+msgstr "طابعة المكونات"
+
+msgid "Clear records for a date range"
+msgstr "مسح السجلات خلال فترة زمنية"
+
+msgid "This permanently deletes every tracking record printed in this date range. This cannot be undone. Continue?"
+msgstr "سيؤدي هذا إلى حذف جميع سجلات التتبع المطبوعة خلال هذه الفترة نهائيًا، ولا يمكن التراجع عنه. هل تريد المتابعة؟"
+
+msgid "From"
+msgstr "من"
+
+msgid "To"
+msgstr "إلى"
+
+msgid "Delete records in this range"
+msgstr "حذف السجلات ضمن هذه الفترة"
+
+msgid "Only tracking records are ever affected — nothing else in the system changes."
+msgstr "لا يتأثر سوى سجلات التتبع فقط — لا يتغير أي شيء آخر في النظام."
+
+msgid "Choose a valid start and end date."
+msgstr "اختر تاريخ بداية ونهاية صحيحين."
+
+msgid "Deleted %(count)s tracking record(s) from %(start)s to %(end)s."
+msgstr "تم حذف %(count)s من سجلات التتبع من %(start)s إلى %(end)s."
+
+msgid "No tracking records found between %(start)s and %(end)s."
+msgstr "لا توجد سجلات تتبع بين %(start)s و %(end)s."
+
+msgid "Export Excel"
+msgstr "تصدير Excel"
+
+msgid "Export Excel with sales report"
+msgstr "تصدير Excel مع تقرير المبيعات"
+
+msgid "Oil batch number (EZLOT...)"
+msgstr "رقم دفعة الزيت (EZLOT...)"
+
+msgid "Counter per perfume"
+msgstr "عداد كل عطر"
+
+msgid "Total bottles"
+msgstr "إجمالي الزجاجات"
+
+msgid "Clear"
+msgstr "مسح"

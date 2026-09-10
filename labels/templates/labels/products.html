@@ -1,0 +1,63 @@
+{% extends "labels/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Products & batches" %} · {% trans "Perfume Label System" %}{% endblock %}
+{% block page_title %}{% trans "Products & batches" %}{% endblock %}
+{% block page_sub %}{% trans "Add each perfume and link it to the current oil batch." %}{% endblock %}
+
+{% block content %}
+<section class="page active" id="page-products">
+  <div class="grid">
+    <div class="card">
+      <h2>{% if editing %}{% trans "Edit" %}: {{ editing.name }}{% else %}{% trans "Add a new perfume" %}{% endif %}</h2>
+      <form method="post" id="productForm">
+        {% csrf_token %}
+        {% if editing %}<input type="hidden" name="product_id" value="{{ editing.id }}">{% endif %}
+        <div class="field">
+          <label for="id_name">{% trans "Perfume name" %}</label>
+          {{ form.name }}
+        </div>
+        <div class="field">
+          <label for="id_oil_batch_number">
+            {% if LANGUAGE_CODE == 'ar' %}رقم دفعة الزيت الخاصة به
+{% elif LANGUAGE_CODE == 'de' %}Seine Öl-Chargennummer
+{% else %}His oil batch number
+{% endif %}
+          </label>
+          {{ form.oil_batch_number }}
+        </div>
+        
+        <div class="btns">
+          <button class="btn trackingBtn" type="submit">{% trans "Save perfume" %}</button>
+          <a href="{% url 'labels:products' %}" class="btn secondary" style="text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center">{% trans "Cancel" %}</a>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>{% trans "Registered perfumes" %}</h2>
+      <div class="productList">
+        {% for p in products %}
+        <div class="productItem">
+          <div><b>{{ p.name }}</b>
+            <small dir="ltr">{{ p.oil_batch_number|default:"—" }}</small>
+            {% if not p.is_active %}<span class="pill" style="background:#fff0ef;color:#a53e39">{% trans "Disabled" %}</span>{% endif %}
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <a href="{% url 'labels:products' %}?edit={{ p.id }}">{% trans "Edit" %}</a>
+           <form method="post"
+      action="{% url 'labels:product_delete' p.id %}"
+      onsubmit="return confirm('{% if LANGUAGE_CODE == "ar" %}حذف المنتج؟ ستبقى سجلات الطباعة القديمة محفوظة.{% elif LANGUAGE_CODE == "de" %}Produkt löschen? Alte Druckprotokolle bleiben erhalten.{% else %}Delete this product? Old print records will be kept.{% endif %}');">
+  {% csrf_token %}
+  <button type="submit" class="danger" style="color:#a53e39;background:none;border:none;cursor:pointer;text-decoration:underline;">
+    {% if LANGUAGE_CODE == 'ar' %}حذف{% elif LANGUAGE_CODE == 'de' %}Löschen{% else %}Delete{% endif %}
+  </button>
+</form>
+          </div>
+        </div>
+        {% empty %}<div class="empty">{% trans "No products yet." %}</div>{% endfor %}
+      </div>
+    
+    </div>
+  </div>
+</section>
+{% endblock %}

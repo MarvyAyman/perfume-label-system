@@ -1,0 +1,359 @@
+{% extends "labels/base.html" %}
+{% load i18n %}
+{% block title %}
+  {% if LANGUAGE_CODE == 'ar' %}التقارير والسجلات · نظام ملصقات العطور
+  {% elif LANGUAGE_CODE == 'de' %}Berichte & Aufzeichnungen · Parfüm-Etikettensystem
+  {% else %}Reports & records · Perfume Label System
+  {% endif %}
+{% endblock %}
+{% block page_title %}
+  {% if LANGUAGE_CODE == 'ar' %}التقارير والسجلات
+  {% elif LANGUAGE_CODE == 'de' %}Berichte & Aufzeichnungen
+  {% else %}Reports & records
+  {% endif %}
+{% endblock %}
+{% block page_sub %}
+  {% if LANGUAGE_CODE == 'ar' %}ابحث في سجلات التتبع الدائمة برقم التتبع أو اسم العطر أو رقم الدفعة.
+  {% elif LANGUAGE_CODE == 'de' %}Durchsuchen Sie permanente Tracking-Aufzeichnungen nach Nummer, Parfüm oder Charge.
+  {% else %}Search permanent tracking records by number, perfume, or batch.
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="stats">
+  <div class="stat">
+    <span>
+      {% if LANGUAGE_CODE == 'ar' %}زجاجات اليوم
+      {% elif LANGUAGE_CODE == 'de' %}Flaschen heute
+      {% else %}Bottles today
+      {% endif %}
+    </span>
+    <strong>{{ today_count }}</strong>
+  </div>
+  <div class="stat">
+    <span>
+      {% if LANGUAGE_CODE == 'ar' %}زجاجات الشهر
+      {% elif LANGUAGE_CODE == 'de' %}Flaschen diesen Monat
+      {% else %}Bottles this month
+      {% endif %}
+    </span>
+    <strong>{{ month_count }}</strong>
+  </div>
+  <div class="stat">
+    <span>
+      {% if LANGUAGE_CODE == 'ar' %}ملصقات المكونات اليوم
+      {% elif LANGUAGE_CODE == 'de' %}Inhaltsstoff-Etiketten heute
+      {% else %}Ingredient labels today
+      {% endif %}
+    </span>
+    <strong>{{ ingredients_today|default:0 }}</strong>
+  </div>
+  <div class="stat">
+    <span>
+      {% if LANGUAGE_CODE == 'ar' %}إجمالي المنتجات
+      {% elif LANGUAGE_CODE == 'de' %}Gesamtprodukte
+      {% else %}Total products
+      {% endif %}
+    </span>
+    <strong>{{ products|length }}</strong>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:20px">
+  <h2>
+    {% if LANGUAGE_CODE == 'ar' %}حذف السجلات لنطاق تاريخي
+    {% elif LANGUAGE_CODE == 'de' %}Datensätze für einen Zeitraum löschen
+    {% else %}Clear records for a date range
+    {% endif %}
+  </h2>
+  <form method="post" action="{% url 'labels:clear_records' %}"
+        onsubmit="return confirm('
+          {% if LANGUAGE_CODE == 'ar' %}هذا يحذف نهائياً كل سجل تتبع تم طباعته في هذا النطاق الزمني. لا يمكن التراجع عن هذا. هل تستمر؟
+          {% elif LANGUAGE_CODE == 'de' %}Dies löscht dauerhaft alle Tracking-Datensätze, die in diesem Zeitraum gedruckt wurden. Dies kann nicht rückgängig gemacht werden. Fortfahren?
+          {% else %}This permanently deletes every tracking record printed in this date range. This cannot be undone. Continue?
+          {% endif %}
+        ');">
+    {% csrf_token %}
+    <div class="row">
+      <div class="field" style="margin-bottom:0">
+        <label>
+          {% if LANGUAGE_CODE == 'ar' %}من
+          {% elif LANGUAGE_CODE == 'de' %}Von
+          {% else %}From
+          {% endif %}
+        </label>
+        <input type="date" name="start_date" required>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>
+          {% if LANGUAGE_CODE == 'ar' %}إلى
+          {% elif LANGUAGE_CODE == 'de' %}Bis
+          {% else %}To
+          {% endif %}
+        </label>
+        <input type="date" name="end_date" required>
+      </div>
+    </div>
+    <div class="btns">
+      <button type="submit" class="btn danger">
+        {% if LANGUAGE_CODE == 'ar' %}حذف السجلات في هذا النطاق
+        {% elif LANGUAGE_CODE == 'de' %}Datensätze in diesem Bereich löschen
+        {% else %}Delete records in this range
+        {% endif %}
+      </button>
+    </div>
+  </form>
+  <div class="hint">
+    {% if LANGUAGE_CODE == 'ar' %}فقط سجلات التتبع تتأثر — لا شيء آخر في النظام يتغير.
+    {% elif LANGUAGE_CODE == 'de' %}Nur Tracking-Datensätze werden beeinflusst — sonst ändert sich nichts im System.
+    {% else %}Only tracking records are ever affected — nothing else in the system changes.
+    {% endif %}
+  </div>
+</div>
+
+<div class="tablecard">
+  <div class="tablehead">
+    <h2>
+      {% if LANGUAGE_CODE == 'ar' %}عداد لكل عطر
+      {% elif LANGUAGE_CODE == 'de' %}Zähler pro Parfüm
+      {% else %}Counter per perfume
+      {% endif %}
+    </h2>
+    <button id="exportReport" class="btn secondary" style="padding:8px 15px;font-size:12px;">
+      {% if LANGUAGE_CODE == 'ar' %}تحميل CSV (إكسل)
+      {% elif LANGUAGE_CODE == 'de' %}CSV herunterladen (Excel)
+      {% else %}Download CSV (Excel)
+      {% endif %}
+    </button>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>
+          {% if LANGUAGE_CODE == 'ar' %}العطر
+          {% elif LANGUAGE_CODE == 'de' %}Parfüm
+          {% else %}Perfume
+          {% endif %}
+        </th>
+        <th>
+          {% if LANGUAGE_CODE == 'ar' %}الدفعة الحالية
+          {% elif LANGUAGE_CODE == 'de' %}Aktuelle Charge
+          {% else %}Current batch
+          {% endif %}
+        </th>
+        <th>
+          {% if LANGUAGE_CODE == 'ar' %}زجاجات اليوم
+          {% elif LANGUAGE_CODE == 'de' %}Flaschen heute
+          {% else %}Bottles today
+          {% endif %}
+        </th>
+        <th>
+          {% if LANGUAGE_CODE == 'ar' %}زجاجات الشهر
+          {% elif LANGUAGE_CODE == 'de' %}Flaschen diesen Monat
+          {% else %}Bottles this month
+          {% endif %}
+        </th>
+        <th>
+          {% if LANGUAGE_CODE == 'ar' %}إجمالي الزجاجات
+          {% elif LANGUAGE_CODE == 'de' %}Gesamt Flaschen
+          {% else %}Total bottles
+          {% endif %}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in counters %}
+        <tr>
+          <td>{{ row.product.name }}</td>
+          <td dir="ltr">{{ row.product.active_batch.batch_number|default:"—" }}</td>
+          <td>{{ row.today }}</td>
+          <td>{{ row.month }}</td>
+          <td>{{ row.total }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="empty">
+          {% if LANGUAGE_CODE == 'ar' %}لا توجد منتجات بعد.
+          {% elif LANGUAGE_CODE == 'de' %}Noch keine Produkte.
+          {% else %}No products yet.
+          {% endif %}
+        </td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="tablecard" style="margin-top:20px">
+  <div class="tablehead">
+    <h2>
+      {% if LANGUAGE_CODE == 'ar' %}آخر عمليات الطباعة
+      {% elif LANGUAGE_CODE == 'de' %}Letzte Druckvorgänge
+      {% else %}Recent print history
+      {% endif %}
+    </h2>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <a href="{% url 'labels:export_xlsx' %}{% if query %}?q={{ query|urlencode }}{% endif %}" class="btn secondary" style="padding:8px 15px;font-size:12px;text-decoration:none;">
+        {% if LANGUAGE_CODE == 'ar' %}تصدير إكسل
+        {% elif LANGUAGE_CODE == 'de' %}Excel exportieren
+        {% else %}Export Excel
+        {% endif %}
+      </a>
+      <a href="{% url 'labels:export_xlsx_counter' %}{% if query %}?q={{ query|urlencode }}{% endif %}" class="btn secondary" style="padding:8px 15px;font-size:12px;text-decoration:none;">
+        {% if LANGUAGE_CODE == 'ar' %}تصدير مع تقرير المبيعات
+        {% elif LANGUAGE_CODE == 'de' %}Mit Verkaufsbericht exportieren
+        {% else %}Export with sales report
+        {% endif %}
+      </a>
+    </div>
+  </div>
+  <div style="padding:0 19px 19px">
+    <form method="get" class="row" style="grid-template-columns:1fr auto">
+      <input type="text" name="q" value="{{ query }}" placeholder="
+        {% if LANGUAGE_CODE == 'ar' %}رقم التتبع، أو اسم العطر، أو رقم دفعة EZLOT…
+        {% elif LANGUAGE_CODE == 'de' %}Tracking-Nummer, Parfümname oder EZLOT-Charge…
+        {% else %}Tracking number, perfume name, or EZLOT batch…
+        {% endif %}
+      ">
+      <button class="btn trackingBtn" type="submit">
+        {% if LANGUAGE_CODE == 'ar' %}بحث
+        {% elif LANGUAGE_CODE == 'de' %}Suchen
+        {% else %}Search
+        {% endif %}
+      </button>
+    </form>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>
+          {% if LANGUAGE_CODE == 'ar' %}التاريخ والوقت
+          {% elif LANGUAGE_CODE == 'de' %}Datum & Uhrzeit
+          {% else %}Date & Time
+          {% endif %}
+        </th>
+        <th>
+          {% if LANGUAGE_CODE == 'ar' %}العطر
+          {% elif LANGUAGE_CODE == 'de' %}Parfüm
+          {% else %}Perfume
+          {% endif %}
+        </th>
+        <th>
+          {% if LANGUAGE_CODE == 'ar' %}نوع الملصق
+          {% elif LANGUAGE_CODE == 'de' %}Etikettentyp
+          {% else %}Label type
+          {% endif %}
+        </th>
+        <th>
+          {% if LANGUAGE_CODE == 'ar' %}الرقم / الدفعة
+          {% elif LANGUAGE_CODE == 'de' %}Nummer / Charge
+          {% else %}Number / Batch
+          {% endif %}
+        </th>
+        <th>
+          {% if LANGUAGE_CODE == 'ar' %}الكمية
+          {% elif LANGUAGE_CODE == 'de' %}Menge
+          {% else %}Quantity
+          {% endif %}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for record in records %}
+        <tr>
+          <td>
+            {% if LANGUAGE_CODE == 'ar' %}
+              {{ record.created_at|date:"j/n/Y" }}، {{ record.created_at|time:"g:i:s A" }}
+            {% elif LANGUAGE_CODE == 'de' %}
+              {{ record.created_at|date:"j.n.Y" }}, {{ record.created_at|time:"H:i:s" }}
+            {% else %}
+              {{ record.created_at|date:"j/n/Y" }}, {{ record.created_at|time:"g:i:s A" }}
+            {% endif %}
+          </td>
+          <td>{{ record.product_name }}</td>
+          <td>
+            {% if record.type == 'tracking' %}
+              <span class="pill" style="background: #edf5f2; color: #185b48;">
+                {% if LANGUAGE_CODE == 'ar' %}تتبع
+                {% elif LANGUAGE_CODE == 'de' %}Tracking
+                {% else %}Tracking
+                {% endif %}
+              </span>
+            {% else %}
+              <span class="pill" style="background: #edf2f7; color: #315c82;">
+                {% if LANGUAGE_CODE == 'ar' %}مكونات
+                {% elif LANGUAGE_CODE == 'de' %}Inhaltsstoff
+                {% else %}Ingredients
+                {% endif %}
+              </span>
+            {% endif %}
+          </td>
+          <td dir="ltr">{{ record.number }}</td>
+          <td>{{ record.quantity }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="empty">
+          {% if LANGUAGE_CODE == 'ar' %}لا توجد سجلات مطابقة.
+          {% elif LANGUAGE_CODE == 'de' %}Keine passenden Datensätze.
+          {% else %}No matching records.
+          {% endif %}
+        </td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="hint">
+  {% if LANGUAGE_CODE == 'ar' %}إعادة طباعة ملصق تتبع موجود (من هذا البحث) لا يُنشئ رقم تتبع جديد أبداً.
+  {% elif LANGUAGE_CODE == 'de' %}Das erneute Drucken eines vorhandenen Tracking-Etiketts (aus dieser Suche) erstellt niemals eine neue Tracking-Nummer.
+  {% else %}Reprinting an existing tracking label (from this search) never creates a new tracking number.
+  {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Export CSV functionality
+  const exportBtn = document.getElementById('exportReport');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', function() {
+      // Get headers based on language
+      {% if LANGUAGE_CODE == 'ar' %}
+        const headers = ['العطر', 'الدفعة الحالية', 'زجاجات اليوم', 'زجاجات الشهر', 'إجمالي الزجاجات'];
+        const filename = `تقرير-العطور-${new Date().toISOString().split('T')[0]}.csv`;
+      {% elif LANGUAGE_CODE == 'de' %}
+        const headers = ['Parfüm', 'Aktuelle Charge', 'Flaschen heute', 'Flaschen diesen Monat', 'Gesamt Flaschen'];
+        const filename = `parfum-bericht-${new Date().toISOString().split('T')[0]}.csv`;
+      {% else %}
+        const headers = ['Perfume', 'Current Batch', 'Bottles Today', 'Bottles This Month', 'Total Bottles'];
+        const filename = `perfume-report-${new Date().toISOString().split('T')[0]}.csv`;
+      {% endif %}
+      
+      // Get all rows from the counter table
+      const rows = document.querySelectorAll('.tablecard table tbody tr');
+      let csv = '\ufeff' + headers.join(',') + '\n';
+      
+      rows.forEach(row => {
+        const cols = row.querySelectorAll('td');
+        if (cols.length === 5) {
+          const values = [];
+          cols.forEach(col => {
+            let text = col.textContent.trim();
+            // If it contains commas or quotes, wrap in quotes
+            if (text.includes(',') || text.includes('"')) {
+              text = '"' + text.replace(/"/g, '""') + '"';
+            }
+            values.push(text);
+          });
+          csv += values.join(',') + '\n';
+        }
+      });
+      
+      // Create download link
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    });
+  }
+});
+</script>
+{% endblock %}

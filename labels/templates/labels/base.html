@@ -1,0 +1,173 @@
+{% load i18n static %}
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="{% static 'labels/lib/BrowserPrint-3.1.250.min.js' %}"></script>
+<script src="{% static 'labels/lib/BrowserPrint-Zebra-1.1.250.min.js' %}"></script>
+<title>{% block title %}{% trans "Perfume Label System" %}{% endblock %}</title>
+<style>
+:root{--ink:#17201d;--muted:#6f7773;--green:#185b48;--dark:#0f4638;--gold:#c8a15a;--bg:#f4f2ed;--line:#e1e2dd;--red:#b7443f;--blue:#315c82;--shadow:0 16px 45px #17201d14}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI",Tahoma,Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+.app{min-height:100vh;display:grid;grid-template-columns:255px 1fr}
+.side{background:var(--dark);color:#fff;padding:27px 19px;display:flex;flex-direction:column;gap:27px}
+.brand{display:flex;gap:11px;align-items:center}
+.mark{width:45px;height:45px;border:1px solid #ffffff66;display:grid;place-items:center;border-radius:14px;color:var(--gold);font:700 25px Georgia}
+.brand small,.sidefoot{color:#b9cec7}
+.nav{display:grid;gap:7px}
+.nav a{border:0;background:transparent;color:#cfe0da;text-decoration:none;text-align:{% if LANGUAGE_BIDI %}right{% else %}left{% endif %};padding:13px 14px;border-radius:10px;cursor:pointer;display:block}
+.nav a.active,.nav a:hover{background:#ffffff1c;color:#fff}
+.sidefoot{margin-top:auto;font-size:12px;line-height:1.8}
+.langswitch{display:flex;gap:6px;flex-wrap:wrap}
+.langswitch button{border:1px solid #ffffff33;background:transparent;color:#cfe0da;border-radius:8px;padding:6px 9px;font-size:12px;cursor:pointer}
+.langswitch button.active{background:var(--gold);color:#17201d;border-color:var(--gold)}
+.main{padding:27px 33px;overflow:hidden}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;gap:14px;flex-wrap:wrap}
+.top h1{font-size:24px;margin:0}
+.top p{color:var(--muted);font-size:13px;margin:7px 0 0}
+.status{background:#e7f3ed;color:#23614e;padding:8px 12px;border-radius:20px;font-size:12px;white-space:nowrap}
+.grid{display:grid;grid-template-columns:minmax(380px,1.15fr) minmax(310px,.85fr);gap:21px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:21px;box-shadow:var(--shadow)}
+.card h2{font-size:16px;margin:0 0 18px}
+.field{display:grid;gap:8px;margin-bottom:15px}
+.field label{font-size:13px;font-weight:700}
+.field input,.field select,.field textarea{width:100%;border:1px solid #d8dbd7;border-radius:10px;padding:11px 12px;background:#fff;outline:none}
+.field textarea{min-height:120px;resize:vertical;line-height:1.7}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--green)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.search{position:relative}
+.clearField{position:absolute;top:38px;inset-inline-end:10px;border:0;background:transparent;color:var(--muted);font-size:20px;line-height:1;cursor:pointer;padding:4px 6px}
+.clearField:hover{color:var(--ink)}
+.results{position:absolute;z-index:4;top:69px;inset-inline:0;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);display:none;overflow:hidden}
+.results div{padding:11px 13px;cursor:pointer}
+.results div:hover{background:#f0f6f3}
+.btns{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.btn{border:0;border-radius:10px;padding:12px 15px;cursor:pointer;font-weight:700}
+.trackingBtn{background:var(--green);color:#fff;flex:1}
+.ingredientsBtn{background:var(--blue);color:#fff;flex:1}
+.secondary{background:#edeae3;color:var(--ink)}
+.danger{background:#fff0ef;color:#a53e39}
+.printerHint{font-size:11px;display:block;font-weight:400;opacity:.8;margin-top:4px}
+.labelarea{background:#eceae4;border-radius:14px;min-height:230px;display:grid;place-items:center;padding:20px}
+.label{direction:ltr;background:#fff;width:330px;min-height:150px;border:1px solid #d5d5d5;padding:27px;box-shadow:0 8px 20px #00000017;font-family:Arial,sans-serif}
+.label .name{color:var(--red);font-size:21px;font-weight:800;margin-bottom:15px}
+.label .track,.label .batch{font-size:18px;margin-top:11px}
+.serial{background:#bcf7b4;padding:1px 3px}
+.ingredientLabel{direction:ltr;background:#fff;width:330px;min-height:150px;border:1px solid #d5d5d5;padding:18px 20px;font:12px/1.45 Arial;box-shadow:0 8px 20px #00000017}
+.ingredientLabel strong{font-size:15px}
+.ingredientLabel p{overflow-wrap:anywhere}
+.ingredientLabel .note{direction:ltr;text-align:left;font:11px/1.4 Arial;color:#444;margin-top:10px;padding-top:8px;border-top:1px dashed #ccc}
+.hint{font-size:11px;color:var(--muted);text-align:center;margin-top:12px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:21px 0}
+.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px}
+.stat span{color:var(--muted);font-size:12px}
+.stat strong{display:block;font-size:23px;margin-top:7px}
+.tablecard{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-top:20px}
+.tablehead{padding:17px 19px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.tablehead h2{font-size:16px;margin:0}
+.tablehead button,.tablehead a{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 11px;cursor:pointer;color:inherit;text-decoration:none}
+table{width:100%;border-collapse:collapse;text-align:{% if LANGUAGE_BIDI %}right{% else %}left{% endif %};font-size:13px}
+th,td{padding:12px 18px;border-top:1px solid #ecece9}
+th{color:var(--muted);font-weight:400;background:#fbfbfa}
+.empty{text-align:center;color:var(--muted)}
+.pill{display:inline-block;border-radius:15px;padding:4px 8px;font-size:11px;background:#edf5f2;color:var(--green)}
+.pill.blue{background:#edf2f7;color:var(--blue)}
+.productList{display:grid;gap:10px}
+.productItem{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.productItem small{display:block;color:var(--muted);margin-top:5px;direction:ltr}
+.productItem button,.productItem a{border:0;background:#eeeae3;border-radius:8px;padding:8px 10px;cursor:pointer;color:inherit;text-decoration:none}
+.help{background:#f8f6f1;border:1px solid #ebe5d8;padding:13px;border-radius:11px;color:#665f52;font-size:12px;line-height:1.7}
+.toast{position:fixed;inset-inline-start:24px;bottom:24px;background:var(--ink);color:#fff;padding:13px 17px;border-radius:10px;display:none;z-index:10;box-shadow:var(--shadow)}
+.messages{list-style:none;padding:0;margin:0 0 16px}
+.messages li{background:#e7f3ed;color:#23614e;padding:10px 14px;border-radius:10px;margin-bottom:8px;font-size:13px}
+.mobile-nav{display:none}
+@media(max-width:880px){.app{display:block}.side{display:none}.main{padding:18px 14px 90px}.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.tablecard{overflow:auto}table{min-width:720px}.label,.ingredientLabel{width:min(330px,100%)}.row{grid-template-columns:1fr}.top{align-items:flex-start}.mobile-nav{display:flex;position:fixed;bottom:0;inset-inline:0;background:#fff;border-top:1px solid var(--line);justify-content:space-around;padding:9px 4px calc(9px + env(safe-area-inset-bottom));z-index:8}.mobile-nav a{border:0;background:transparent;color:var(--muted);font-size:18px;text-decoration:none;text-align:center;display:flex;flex-direction:column;align-items:center;gap:2px;flex:1}.mobile-nav a span{font-size:10px;line-height:1.2}.mobile-nav a.active{color:var(--green)}}
+@media print{
+  body *{visibility:hidden}
+  .printTarget,.printTarget *{visibility:visible}
+  .printTarget{position:absolute;top:0;left:0;box-shadow:none;border:0;margin:0}
+  .label.printTarget{width:30mm;height:15mm;padding:1.5mm 2mm;overflow:hidden}
+  .label.printTarget .name{font-size:9pt;margin-bottom:1.5mm;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .label.printTarget .track,.label.printTarget .batch{font-size:7pt;margin-top:1mm}
+  .ingredientLabel.printTarget{width:56mm;height:56mm;padding:3mm;overflow:hidden;font-size:7pt;line-height:1.35}
+  .ingredientLabel.printTarget strong{font-size:9pt}
+  .ingredientLabel.printTarget .note{font-size:6.5pt;margin-top:2mm;padding-top:1.5mm}
+}
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="mark">A</div><div><strong>ASEM PARFUMS</strong><br><small>Label Studio</small></div></div>
+    <nav class="nav">
+      <a href="{% url 'labels:print' %}" class="{% if request.resolver_match.url_name == 'print' %}active{% endif %}">▣ {% trans "Main printing" %}</a>
+      <a href="{% url 'labels:products' %}" class="{% if request.resolver_match.url_name == 'products' %}active{% endif %}">＋ {% trans "Products & batches" %}</a>
+      <a href="{% url 'labels:ingredients' %}" class="{% if request.resolver_match.url_name == 'ingredients' %}active{% endif %}">≡ {% trans "Ingredients" %}</a>
+      <a href="{% url 'labels:reports' %}" class="{% if request.resolver_match.url_name == 'reports' %}active{% endif %}">▤ {% trans "Reports & records" %}</a>
+    </nav>
+
+    <form action="{% url 'set_language' %}" method="post" class="langswitch">
+      {% csrf_token %}
+      <input name="next" type="hidden" value="{{ request.path }}">
+      {% get_current_language as CURRENT_LANGUAGE %}
+      {% get_available_languages as AVAILABLE_LANGUAGES %}
+      {% for code, name in AVAILABLE_LANGUAGES %}
+        <button type="submit" name="language" value="{{ code }}" class="{% if code == CURRENT_LANGUAGE %}active{% endif %}">{{ name }}</button>
+      {% endfor %}
+    </form>
+
+    <div class="sidefoot">
+      <div style="margin-bottom:10px">{% trans "Tracking printer" %}<select id="trackingDeviceSelect" style="width:100%;margin-top:4px;border-radius:8px;padding:6px;font-size:12px;border:0"></select></div>
+      <div style="margin-bottom:10px">{% trans "Ingredients printer" %}<select id="ingredientsDeviceSelect" style="width:100%;margin-top:4px;border-radius:8px;padding:6px;font-size:12px;border:0"></select></div>
+      <button id="refreshDevices" type="button" style="width:100%;border:0;background:#ffffff1c;color:#fff;border-radius:8px;padding:8px;cursor:pointer;font-size:12px">↻ {% trans "Refresh printer list" %}</button><br>
+      {% if request.user.is_authenticated %}
+        <br><br>{{ request.user.get_username }} ·
+        <form method="post" action="{% url 'logout' %}" style="display:inline">
+          {% csrf_token %}
+          <button type="submit" style="background:none;border:0;color:#fff;text-decoration:underline;cursor:pointer;padding:0;font:inherit">{% trans "Log out" %}</button>
+        </form>
+      {% endif %}
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="top">
+      <div>
+        <h1>{% block page_title %}{% endblock %}</h1>
+        <p>{% block page_sub %}{% endblock %}</p>
+      </div>
+      <span class="status">● {% trans "System ready" %}</span>
+    </header>
+
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+  </main>
+</div>
+<nav class="mobile-nav">
+  <a href="{% url 'labels:print' %}" class="{% if request.resolver_match.url_name == 'print' %}active{% endif %}"><span>{% trans "Main printing" %}</span></a>
+  <a href="{% url 'labels:products' %}" class="{% if request.resolver_match.url_name == 'products' %}active{% endif %}"><span>{% trans "Products & batches" %}</span></a>
+  <a href="{% url 'labels:ingredients' %}" class="{% if request.resolver_match.url_name == 'ingredients' %}active{% endif %}"><span>{% trans "Ingredients" %}</span></a>
+  <a href="{% url 'labels:reports' %}" class="{% if request.resolver_match.url_name == 'reports' %}active{% endif %}"><span>{% trans "Reports & records" %}</span></a>
+</nav>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+  const tracking=document.getElementById("trackingDeviceSelect"), ingredients=document.getElementById("ingredientsDeviceSelect"), refresh=document.getElementById("refreshDevices");
+  function fill(select, devices, selected){ if(!select)return; select.innerHTML=""; devices.forEach(function(d,i){ const o=document.createElement("option"); o.value=i; o.textContent=d.name||("Zebra "+(i+1)); select.appendChild(o); }); if(selected!==null && devices[selected]) select.value=selected; }
+  function loadDevices(){ if(typeof BrowserPrint === "undefined" || !BrowserPrint.getLocalDevices){ return; } BrowserPrint.getLocalDevices(function(devices){ const printers=(devices||[]).filter(function(d){return d.deviceType === "printer" || d.uid || d.name;}); fill(tracking,printers,0); fill(ingredients,printers,1<printers.length?1:0); },function(){ }); }
+  if(refresh) refresh.addEventListener("click",loadDevices);
+  loadDevices();
+})();
+</script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

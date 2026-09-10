@@ -1,0 +1,685 @@
+{% extends "labels/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Main printing" %} · {% trans "Perfume Label System" %}{% endblock %}
+{% block page_title %}{% trans "Main printing" %}{% endblock %}
+{% block page_sub %}{% trans "Choose a perfume — its batch and ingredients load automatically." %}{% endblock %}
+
+{% block content %}
+<div class="grid">
+  <div class="card">
+    <h2>{% trans "Choose perfume & print" %}</h2>
+
+    <div class="field search">
+      <label for="searchProduct">{% trans "Perfume name" %}</label>
+      <input id="searchProduct" autocomplete="off" placeholder="{% trans "Type the perfume name…" %}">
+      <button type="button" id="clearProduct" class="clearField" style="display:none" aria-label="{% trans "Clear" %}">×</button>
+      <div class="results" id="searchResults"></div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="autoBatch">{% trans "Oil batch number — automatic" %}</label>
+        <input id="autoBatch" readonly placeholder="{% trans "Appears once a perfume is selected" %}">
+      </div>
+      <div class="field">
+        <label for="copies">{% trans "Number of bottles" %}</label>
+        <input id="copies" type="number" min="1" max="100" value="1">
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="labelNote">{% trans "Note (optional — prints only under the ingredients label)" %}</label>
+      <textarea id="labelNote" rows="3" placeholder="{% trans "Leave empty for nothing to print here…" %}"></textarea>
+    </div>
+
+    <div class="help" id="selectionInfo">
+      {% trans "Pick a registered perfume from the search results. Its current batch number is filled in automatically." %}
+    </div>
+
+    <div class="btns">
+      <button class="btn trackingBtn" id="printTracking" type="button">
+        {% trans "Print tracking label" %}
+        <span class="printerHint">{% trans "Printer 1" %} · Zebra ZD411 #1</span>
+      </button>
+      <button class="btn ingredientsBtn" id="printIngredients" type="button">
+        {% trans "Print ingredients label" %}
+        <span class="printerHint">{% trans "Printer 2" %} · Zebra ZD411 #2</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>{% trans "Preview" %}</h2>
+    <div class="labelarea">
+      <div class="label printTarget" id="trackingPreview">
+        <div class="name" id="pName">{% trans "Perfume name" %}</div>
+        <div class="track"><span id="pDateCode"></span>-<span class="serial" id="pSerial">------</span></div>
+        <div class="batch" id="pBatch">EZLOT...</div>
+      </div>
+
+      <div class="ingredientLabel printTarget" id="ingredientsPreview" style="display:none">
+        <strong id="iName">{% trans "Perfume name" %}</strong>
+        <p><b>INGREDIENTS:</b> <span id="iText">{% trans "Ingredients not added yet." %}</span></p>
+        <div class="note" id="iNote" style="display:none"></div>
+      </div>
+    </div>
+    <div class="hint">{% trans "The preview changes depending on which print button you choose." %}</div>
+  </div>
+</div>
+
+<!-- Only this container is visible when the browser print dialog opens. -->
+<div id="printSheet" aria-hidden="true"></div>
+
+<style id="pageSizeStyle"></style>
+<style id="printSheetStyle">
+  #printSheet {
+    display: none;
+  }
+
+  @media print {
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+      background: white !important;
+    }
+
+    body > *:not(#printSheet) {
+      display: none !important;
+    }
+
+    #printSheet {
+      display: block !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background: white !important;
+    }
+
+    /* Tracking labels */
+    .trackingCopy {
+      display: block !important;
+      width: 30mm !important;
+      height: 15mm !important;
+      margin: 0 !important;
+      padding: 2mm 2.5mm !important;
+      box-sizing: border-box !important;
+      page-break-after: always !important;
+      break-after: page !important;
+      background: white !important;
+      color: black !important;
+      font-family: Arial, Helvetica, sans-serif !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      text-align: left !important;
+    }
+
+    .trackingCopy:last-child {
+      page-break-after: auto !important;
+      break-after: auto !important;
+    }
+
+    .trackingCopy .name {
+      font-size: 9pt !important;
+      font-weight: bold !important;
+      color: #b7443f !important;
+      margin-bottom: 1mm !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      text-align: left !important;
+    }
+
+    .trackingCopy .track {
+      font-size: 8pt !important;
+      margin: 0.5mm 0 !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      text-align: left !important;
+    }
+
+    .trackingCopy .track .serial {
+      background: #b6ecae !important;
+      padding: 0 2px !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      font-weight: bold !important;
+      display: inline !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    .trackingCopy .batch {
+      font-size: 8pt !important;
+      margin: 0.5mm 0 !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      text-align: left !important;
+    }
+
+    /* Ingredient labels */
+    .ingredientCopy {
+      display: block !important;
+      width: 56mm !important;
+      height: 56mm !important;
+      margin: 0 !important;
+      padding: 3mm !important;
+      box-sizing: border-box !important;
+      page-break-after: always !important;
+      break-after: page !important;
+      background: white !important;
+      color: black !important;
+      font-family: Arial, Helvetica, sans-serif !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      text-align: left !important;
+    }
+
+    .ingredientCopy:last-child {
+      page-break-after: auto !important;
+      break-after: auto !important;
+    }
+
+    .ingredientCopy .ingredient-name {
+      font-size: 11pt !important;
+      font-weight: bold !important;
+      display: block !important;
+      margin-bottom: 1.5mm !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      text-align: left !important;
+      color: #000000 !important;
+    }
+
+    .ingredientCopy .ingredient-text {
+      font-size: 8pt !important;
+      line-height: 1.5 !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      text-align: left !important;
+    }
+
+    .ingredientCopy .ingredient-text .ingredients-label {
+      font-weight: bold !important;
+      font-size: 8pt !important;
+      display: inline !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    .ingredientCopy .ingredient-text .ingredients-content {
+      font-weight: normal !important;
+      display: inline !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+
+    .ingredientCopy .ingredient-note {
+      font-size: 7pt !important;
+      margin-top: 2mm !important;
+      padding-top: 1.5mm !important;
+      color: #6f7773 !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      text-align: left !important;
+      border-top: 0.5px solid #cccccc !important;
+    }
+  }
+</style>
+
+<!-- Highlights the random serial part of the tracking number -->
+<style id="serialHighlightStyle">
+  .labelarea {
+    background: #eceae4;
+    border-radius: 14px;
+    min-height: 230px;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+  }
+
+  .label.printTarget {
+    direction: ltr;
+    background: #fff;
+    width: 330px;
+    min-height: 150px;
+    border: 1px solid #d5d5d5;
+    padding: 27px;
+    box-shadow: 0 8px 20px #00000017;
+    font-family: Arial, sans-serif;
+    text-align: left !important;
+  }
+
+  .label.printTarget .name {
+    color: #b7443f;
+    font-size: 21px;
+    font-weight: 800;
+    margin-bottom: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left !important;
+  }
+
+  .label.printTarget .track,
+  .label.printTarget .batch {
+    font-size: 18px;
+    margin-top: 11px;
+    text-align: left !important;
+  }
+
+  .track .serial {
+    background: #b6ecae !important;
+    padding: 1px 3px !important;
+    display: inline !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .ingredientLabel.printTarget {
+    direction: ltr;
+    background: #fff;
+    width: 330px;
+    min-height: 150px;
+    border: 1px solid #d5d5d5;
+    padding: 18px 20px;
+    font: 12px/1.45 Arial, sans-serif;
+    box-shadow: 0 8px 20px #00000017;
+    text-align: left !important;
+  }
+
+  .ingredientLabel.printTarget strong {
+    font-size: 15px;
+    display: block;
+    text-align: left !important;
+  }
+
+  .ingredientLabel.printTarget p {
+    overflow-wrap: anywhere;
+    text-align: left !important;
+  }
+
+  .ingredientLabel.printTarget p b {
+    font-weight: bold !important;
+  }
+
+  .ingredientLabel.printTarget .note {
+    font-size: 11px;
+    color: #6f7773;
+    text-align: center;
+    margin-top: 12px;
+  }
+
+  @media (max-width: 880px) {
+    .label.printTarget,
+    .ingredientLabel.printTarget {
+      width: min(330px, 100%);
+    }
+  }
+</style>
+
+<div class="stats">
+  <div class="stat"><span>{% trans "This perfume today" %}</span><strong id="selectedDay">0</strong></div>
+  <div class="stat"><span>{% trans "This perfume this month" %}</span><strong id="selectedMonth">0</strong></div>
+  <div class="stat"><span>{% trans "All perfumes today" %}</span><strong id="allDay">{{ today_count }}</strong></div>
+  <div class="stat"><span>{% trans "All perfumes this month" %}</span><strong id="allMonth">{{ month_count }}</strong></div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const urls = {
+  search: "{% url 'labels:api_search' %}",
+  productDetail: "{% url 'labels:api_product_detail' 999999 %}",
+  printTracking: "{% url 'labels:print_tracking' %}",
+  printIngredients: "{% url 'labels:print_ingredients' %}"
+};
+
+const csrfToken = "{{ csrf_token }}";
+const i18n = {
+  pickFirst: "{% trans "Choose a perfume from the search results first." %}",
+  searchFailed: "{% trans "Search failed." %}",
+  productFailed: "{% trans "The perfume could not be loaded." %}",
+  printFailed: "{% trans "Printing failed." %}",
+  ingredientsMissing: "{% trans "Ingredients not added yet." %}"
+};
+
+function el(id) {
+  return document.getElementById(id);
+}
+
+function toast(text) {
+  const box = el('toast');
+  if (!box) {
+    window.alert(text);
+    return;
+  }
+  box.textContent = text;
+  box.style.display = 'block';
+  window.setTimeout(() => box.style.display = 'none', 2600);
+}
+
+let selected = null;
+let searchTimer = null;
+
+function setPageSize(mmWidth, mmHeight) {
+  el('pageSizeStyle').textContent = `@page { size: ${mmWidth}mm ${mmHeight}mm; margin: 0; }`;
+}
+
+function clearSelection() {
+  selected = null;
+  el('searchProduct').value = '';
+  el('autoBatch').value = '';
+  el('clearProduct').style.display = 'none';
+  el('searchResults').style.display = 'none';
+  el('selectionInfo').textContent = "{% trans "Pick a registered perfume from the search results. Its current batch number is filled in automatically." %}";
+  el('selectedDay').textContent = '0';
+  el('selectedMonth').textContent = '0';
+  el('searchProduct').focus();
+  // Reset preview
+  el('pName').textContent = "{% trans "Perfume name" %}";
+  el('pDateCode').textContent = '';
+  el('pSerial').textContent = '------';
+  el('pBatch').textContent = 'EZLOT...';
+}
+
+el('clearProduct').addEventListener('click', clearSelection);
+
+el('searchProduct').addEventListener('input', function () {
+  const query = this.value;
+  selected = null;
+  el('autoBatch').value = '';
+  el('clearProduct').style.display = query ? 'block' : 'none';
+  window.clearTimeout(searchTimer);
+  searchTimer = window.setTimeout(() => runSearch(query), 200);
+});
+
+el('searchProduct').addEventListener('focus', function () {
+  runSearch(this.value);
+});
+
+function runSearch(query) {
+  fetch(urls.search + '?q=' + encodeURIComponent(query))
+    .then(response => {
+      if (!response.ok) throw new Error(`${i18n.searchFailed} (${response.status})`);
+      return response.json();
+    })
+    .then(data => {
+      const box = el('searchResults');
+      box.innerHTML = data.results.map(product => `
+        <div data-id="${product.id}">
+          <b>${escapeHtml(product.name)}</b><br>
+          <small dir="ltr">${escapeHtml(product.oil_batch_number || '')}</small>
+        </div>
+      `).join('');
+      box.style.display = data.results.length ? 'block' : 'none';
+      Array.from(box.children).forEach(row => {
+        row.addEventListener('click', () => selectProduct(row.dataset.id));
+      });
+    })
+    .catch(error => toast(error.message));
+}
+
+function escapeHtml(value) {
+  const div = document.createElement('div');
+  div.textContent = value == null ? '' : String(value);
+  return div.innerHTML;
+}
+
+function formatOilBatch(value) {
+  const raw = (value == null ? '' : String(value)).trim();
+  if (!raw) return 'EZLOT...';
+  // If it already starts with EZLOT, return as is, otherwise add it
+  return raw.toUpperCase().startsWith('EZLOT') ? raw : `EZLOT${raw}`;
+}
+
+function selectProduct(id) {
+  fetch(urls.productDetail.replace('999999', String(id)))
+    .then(response => {
+      if (!response.ok) throw new Error(`${i18n.productFailed} (${response.status})`);
+      return response.json();
+    })
+    .then(product => {
+      selected = product;
+      const oilBatch = product.oil_batch_number || '';
+      const displayOilBatch = formatOilBatch(oilBatch);
+      
+      el('searchProduct').value = product.name;
+      el('autoBatch').value = displayOilBatch;
+      el('clearProduct').style.display = 'block';
+      
+      // Show the preview tracking number from the server
+      const previewTracking = product.preview_tracking || '';
+      const parts = previewTracking.split('-');
+      el('pName').textContent = product.name;
+      el('pDateCode').textContent = parts[0] || '';
+      el('pSerial').textContent = parts[1] || '------';
+      el('pBatch').textContent = displayOilBatch;
+      
+      el('iName').textContent = product.name;
+      el('iText').textContent = product.ingredients || i18n.ingredientsMissing;
+      el('selectionInfo').innerHTML = `<b>${escapeHtml(product.name)}</b> · {% trans "Oil batch" %}: <span dir="ltr">${escapeHtml(displayOilBatch)}</span> · {% trans "Tracking" %}: <span dir="ltr">${escapeHtml(previewTracking)}</span>`;
+      el('searchResults').style.display = 'none';
+      el('selectedDay').textContent = product.today_count;
+      el('selectedMonth').textContent = product.month_count;
+      
+      // Show tracking preview by default
+      el('trackingPreview').style.display = 'block';
+      el('ingredientsPreview').style.display = 'none';
+    })
+    .catch(error => toast(error.message));
+}
+
+function requireProduct() {
+  if (!selected) {
+    toast(i18n.pickFirst);
+    return false;
+  }
+  return true;
+}
+
+function safeQuantity() {
+  return Math.max(1, Math.min(100, Number(el('copies').value) || 1));
+}
+
+function clearPrintSheet() {
+  el('printSheet').innerHTML = '';
+  el('printSheet').className = '';
+  el('printSheet').style.cssText = '';
+  document.body.className = '';
+}
+
+function setTrackingNumberPreview(trackingNumber) {
+  const value = String(trackingNumber || '').trim();
+  const parts = value.split(/-(.+)/);
+  el('pDateCode').textContent = parts[0] || '';
+  el('pSerial').textContent = parts[1] || '------';
+}
+
+function updateTrackingPreview(label) {
+  const trackingNumber = String(label.tracking_number || '').trim();
+  const oilBatch = label.oil_batch_number || '';
+  el('pName').textContent = label.name || '';
+  setTrackingNumberPreview(trackingNumber);
+  el('pBatch').textContent = formatOilBatch(oilBatch);
+}
+
+function addTrackingLabelToSheet(label) {
+  const trackingNumber = String(label.tracking_number || '').trim();
+  const oilBatch = label.oil_batch_number || '';
+  
+  // Extract the date part and serial part
+  let datePart = '';
+  let serialPart = '------';
+  
+  if (trackingNumber.includes('-')) {
+    const parts = trackingNumber.split('-');
+    datePart = parts[0] || '';
+    serialPart = parts.slice(1).join('-') || '------';
+  } else if (trackingNumber.length >= 3) {
+    datePart = trackingNumber.slice(0, -3);
+    serialPart = trackingNumber.slice(-3);
+  }
+  
+  // Build the HTML with proper serial highlighting
+  let html = `<div class="name">${escapeHtml(label.name || '')}</div>`;
+  html += `<div class="track">${escapeHtml(datePart)}-<span class="serial">${escapeHtml(serialPart)}</span></div>`;
+  html += `<div class="batch">${escapeHtml(formatOilBatch(oilBatch))}</div>`;
+  
+  const node = document.createElement('div');
+  node.className = 'trackingCopy';
+  node.innerHTML = html;
+  el('printSheet').appendChild(node);
+}
+
+function addTrackingCopiesToSheet(labels) {
+  if (!labels || !Array.isArray(labels)) return 0;
+
+  labels.forEach(label => {
+    addTrackingLabelToSheet(label);
+  });
+  return el('printSheet').querySelectorAll('.trackingCopy').length;
+}
+
+function addIngredientLabelToSheet(data) {
+  // Split ingredients into label and content
+  const ingredientsText = data.ingredients || '';
+  
+  let html = `
+    <div class="ingredient-name">${escapeHtml(data.name || '')}</div>
+    <div class="ingredient-text">
+      <span class="ingredients-label">INGREDIENTS:</span>
+      <span class="ingredients-content">${escapeHtml(ingredientsText)}</span>
+    </div>
+  `;
+  
+  if (data.note) {
+    html += `<div class="ingredient-note">${escapeHtml(data.note)}</div>`;
+  }
+  
+  const node = document.createElement('div');
+  node.className = 'ingredientCopy';
+  node.innerHTML = html;
+  el('printSheet').appendChild(node);
+}
+
+function addIngredientCopiesToSheet(data, quantity) {
+  if (!data) return 0;
+
+  for (let index = 0; index < quantity; index += 1) {
+    addIngredientLabelToSheet(data);
+  }
+  return el('printSheet').querySelectorAll('.ingredientCopy').length;
+}
+
+function printAfterSheetIsReady(unitWidth, unitHeight) {
+  setPageSize(unitWidth, unitHeight);
+  
+  if (el('printSheet').parentElement !== document.body) {
+    document.body.appendChild(el('printSheet'));
+  }
+  
+  setTimeout(() => {
+    window.print();
+  }, 300);
+}
+
+el('printTracking').addEventListener('click', function () {
+  if (!requireProduct()) return;
+
+  const quantity = safeQuantity();
+  const body = new URLSearchParams({
+    product_id: String(selected.id),
+    quantity: String(quantity)
+  });
+
+  fetch(urls.printTracking, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': csrfToken },
+    body
+  })
+    .then(response => {
+      if (!response.ok) throw new Error(`${i18n.printFailed} (${response.status})`);
+      return response.json();
+    })
+    .then(data => {
+      if (data.error) {
+        toast(data.error);
+        return;
+      }
+
+      clearPrintSheet();
+      // data.labels is an array of labels, each with its own tracking_number
+      const copyCount = addTrackingCopiesToSheet(data.labels);
+      // Update preview with the first label
+      if (data.labels && data.labels.length > 0) {
+        updateTrackingPreview(data.labels[0]);
+      }
+      el('trackingPreview').style.display = 'block';
+      el('ingredientsPreview').style.display = 'none';
+      printAfterSheetIsReady(30, 15);
+      toast(`${copyCount} → {% trans "Printer 1" %}`);
+    })
+    .catch(error => toast(error.message));
+});
+
+el('printIngredients').addEventListener('click', function () {
+  if (!requireProduct()) return;
+
+  const quantity = safeQuantity();
+  const note = el('labelNote').value.trim();
+  const body = new URLSearchParams({
+    product_id: String(selected.id),
+    quantity: String(quantity),
+    note
+  });
+
+  fetch(urls.printIngredients, {
+    method: 'POST',
+    headers: { 'X-CSRFToken': csrfToken },
+    body
+  })
+    .then(response => {
+      if (!response.ok) throw new Error(`${i18n.printFailed} (${response.status})`);
+      return response.json();
+    })
+    .then(data => {
+      if (data.error) {
+        toast(data.error);
+        return;
+      }
+
+      clearPrintSheet();
+      // Add note to data for printing
+      data.note = note;
+      const copyCount = addIngredientCopiesToSheet(data, Number(data.quantity || quantity));
+      // Update preview
+      el('iName').textContent = data.name || '';
+      el('iText').textContent = data.ingredients || i18n.ingredientsMissing;
+      if (note) {
+        el('iNote').textContent = note;
+        el('iNote').style.display = 'block';
+      } else {
+        el('iNote').style.display = 'none';
+      }
+      el('trackingPreview').style.display = 'none';
+      el('ingredientsPreview').style.display = 'block';
+      printAfterSheetIsReady(56, 56);
+      toast(`${copyCount} → {% trans "Printer 2" %}`);
+    })
+    .catch(error => toast(error.message));
+});
+
+window.addEventListener('afterprint', clearPrintSheet);
+</script>
+{% endblock %}

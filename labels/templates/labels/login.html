@@ -1,0 +1,63 @@
+{% load i18n %}
+<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% trans "Log in" %} · {% trans "Perfume Label System" %}</title>
+<style>
+:root{--ink:#17201d;--muted:#6f7773;--green:#185b48;--dark:#0f4638;--gold:#c8a15a;--bg:#f4f2ed;--line:#e1e2dd;--shadow:0 16px 45px #17201d14}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(160deg,var(--dark),#183f33 60%,var(--bg) 60%);display:grid;place-items:center;font-family:"Segoe UI",Tahoma,Arial,sans-serif;color:var(--ink)}
+.card{background:#fff;border-radius:20px;box-shadow:var(--shadow);padding:34px 30px;width:min(360px,92vw)}
+.brand{display:flex;gap:11px;align-items:center;margin-bottom:22px}
+.mark{width:45px;height:45px;border:1px solid #17201d22;display:grid;place-items:center;border-radius:14px;color:var(--gold);font:700 25px Georgia;background:var(--dark)}
+h1{font-size:19px;margin:0 0 4px}
+p.sub{color:var(--muted);font-size:13px;margin:0 0 20px}
+.field{display:grid;gap:8px;margin-bottom:15px}
+.field label{font-size:13px;font-weight:700}
+.field input{width:100%;border:1px solid #d8dbd7;border-radius:10px;padding:11px 12px;outline:none}
+.field input:focus{border-color:var(--green)}
+.btn{width:100%;border:0;border-radius:10px;padding:12px 15px;cursor:pointer;font-weight:700;background:var(--green);color:#fff;margin-top:6px}
+.errors{background:#fff0ef;color:#a53e39;border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:15px}
+.langswitch{display:flex;gap:6px;justify-content:center;margin-top:22px}
+.langswitch button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer}
+.langswitch button.active{background:var(--gold);border-color:var(--gold)}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="brand"><div class="mark">A</div><div><strong>ASEM PARFUMS</strong><br><small style="color:var(--muted)">Label Studio</small></div></div>
+  <h1>{% trans "Log in" %}</h1>
+  <p class="sub">{% trans "Sign in to open the printing system." %}</p>
+
+  {% if form.errors %}
+    <div class="errors">{% trans "Incorrect username or password." %}</div>
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="field">
+      <label for="id_username">{% trans "Username" %}</label>
+      <input type="text" name="username" id="id_username" autofocus autocomplete="username">
+    </div>
+    <div class="field">
+      <label for="id_password">{% trans "Password" %}</label>
+      <input type="password" name="password" id="id_password" autocomplete="current-password">
+    </div>
+    <input type="hidden" name="next" value="{{ next }}">
+    <button type="submit" class="btn">{% trans "Log in" %}</button>
+  </form>
+
+  <form action="{% url 'set_language' %}" method="post" class="langswitch">
+    {% csrf_token %}
+    <input name="next" type="hidden" value="{{ request.path }}">
+    {% get_current_language as CURRENT_LANGUAGE %}
+    {% get_available_languages as AVAILABLE_LANGUAGES %}
+    {% for code, name in AVAILABLE_LANGUAGES %}
+      <button type="submit" name="language" value="{{ code }}" class="{% if code == CURRENT_LANGUAGE %}active{% endif %}">{{ name }}</button>
+    {% endfor %}
+  </form>
+</div>
+</body>
+</html>

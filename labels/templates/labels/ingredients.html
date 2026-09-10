@@ -1,0 +1,131 @@
+{% extends "labels/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Ingredients" %} · {% trans "Perfume Label System" %}{% endblock %}
+{% block page_title %}{% trans "Perfume ingredients" %}{% endblock %}
+{% block page_sub %}{% trans "Keep one current ingredients list per perfume." %}{% endblock %}
+
+{% block content %}
+<section class="page active" id="page-ingredients">
+  <div class="grid">
+    <div class="card" id="ingredientsEditor">
+      <h2>{% trans "Add or edit ingredients" %}</h2>
+      <div class="field">
+        <label for="ingredientProductSearch">{% trans "Choose perfume" %}</label>
+        <div style="position:relative">
+          <input type="text" id="ingredientProductSearch" autocomplete="off"
+                 placeholder="{% trans 'Choose perfume' %}"
+                 value="{{ product.name|default:'' }}"
+                 style="width:100%;padding-right:34px;box-sizing:border-box;">
+          <button type="button" id="clearProductSearch"
+                  style="position:absolute;top:50%;right:8px;transform:translateY(-50%);background:none;border:none;font-size:18px;line-height:1;color:#888;cursor:pointer;display:{% if product %}block{% else %}none{% endif %};">×</button>
+          <div id="productSearchResults"
+               style="display:none;position:absolute;z-index:20;top:100%;left:0;right:0;background:#fff;border:1px solid var(--line);border-radius:8px;margin-top:4px;max-height:220px;overflow-y:auto;box-shadow:0 6px 16px rgba(0,0,0,.1)"></div>
+        </div>
+      </div>
+      <form method="post" id="ingredientsForm">
+        {% csrf_token %}
+        {% if product %}<input type="hidden" name="product_id" value="{{ product.id }}">{% endif %}
+        <div class="field">
+          <label for="id_ingredients_text">{% trans "Ingredients text as it will be printed" %}</label>
+          {% if product %}
+          {{ form.ingredients_text }}
+          {% else %}
+          <textarea dir="ltr" rows="6" disabled
+                    placeholder="{% trans 'Choose a perfume above first' %}"
+                    style="background:#f5f5f5;color:#888;cursor:not-allowed;"></textarea>
+          {% endif %}
+        </div>
+        <div class="btns">
+          <button class="btn ingredientsBtn" type="submit" {% if not product %}disabled style="opacity:.5;cursor:not-allowed;"{% endif %}>{% trans "Save ingredients" %}</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>{% trans "Ingredients label preview" %}</h2>
+      <div class="labelarea"><div class="ingredientLabel">
+        <strong id="manageIName">{{ product.name|default:"—" }}</strong>
+        <p><b>INGREDIENTS:</b> <span id="manageIText">{{ product.ingredients_text|default:"—" }}</span></p>
+      </div></div>
+      <div class="help" style="margin-top:15px">{% trans "Enter the legally-approved ingredients list exactly as it should appear on the product file." %}</div>
+    </div>
+  </div>
+
+  <div class="tablecard">
+    <div class="tablehead"><h2>{% trans "All perfumes & their ingredients" %}</h2></div>
+    <div class="productList" style="padding:0 18px 18px">
+      {% for p in products %}<div class="productItem"><div><b>{{ p.name }}</b><div style="margin-top:7px;color:var(--muted);font-size:12px;max-width:650px;overflow-wrap:anywhere;direction:ltr;text-align:left">{% if p.ingredients_text %}{{ p.ingredients_text }}{% else %}{% trans "Ingredients not added yet." %}{% endif %}</div></div><a href="{% url 'labels:ingredients' %}?product={{ p.id }}">{% trans "Edit ingredients" %}</a></div>{% empty %}<div class="empty">{% trans "No products yet." %}</div>{% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script id="productsData" type="application/json">
+[{% for p in products %}{"id": {{ p.id }}, "name": "{{ p.name|escapejs }}"}{% if not forloop.last %},{% endif %}{% endfor %}]
+</script>
+<script>
+(function(){
+  const input = document.getElementById('ingredientProductSearch');
+  if(!input) return;
+  const products = JSON.parse(document.getElementById('productsData').textContent);
+  const clearBtn = document.getElementById('clearProductSearch');
+  const results = document.getElementById('productSearchResults');
+  const url = "{% url 'labels:ingredients' %}";
+
+  function renderResults(list){
+    if(!list.length){
+      results.innerHTML = '<div style="padding:9px 12px;color:#888;font-size:13px">{% trans "No matches" %}</div>';
+      results.style.display = 'block';
+      return;
+    }
+    results.innerHTML = list.map(function(p){
+      return '<div class="search-result-item" data-id="'+p.id+'" style="padding:9px 12px;cursor:pointer;font-size:14px;border-bottom:1px solid var(--line)">'+p.name+'</div>';
+    }).join('');
+    results.style.display = 'block';
+  }
+
+  function filtered(q){
+    return products.filter(function(p){ return p.name.toLowerCase().includes(q); });
+  }
+
+  input.addEventListener('input', function(){
+    const q = this.value.trim().toLowerCase();
+    clearBtn.style.display = this.value ? 'block' : 'none';
+    if(!q){ results.style.display = 'none'; return; }
+    renderResults(filtered(q));
+  });
+
+  input.addEventListener('focus', function(){
+    const q = this.value.trim().toLowerCase();
+    renderResults(q ? filtered(q) : products);
+  });
+
+  results.addEventListener('click', function(e){
+    const item = e.target.closest('.search-result-item');
+    if(!item) return;
+    window.location.href = url + '?product=' + encodeURIComponent(item.dataset.id);
+  });
+
+  clearBtn.addEventListener('click', function(){
+    input.value = '';
+    clearBtn.style.display = 'none';
+    results.style.display = 'none';
+    input.focus();
+    const nameEl = document.getElementById('manageIName');
+    const textEl = document.getElementById('manageIText');
+    if(nameEl) nameEl.textContent = '—';
+    if(textEl) textEl.textContent = '—';
+  });
+
+  document.addEventListener('click', function(e){
+    if(!e.target.closest('#ingredientProductSearch') && !e.target.closest('#productSearchResults')){
+      results.style.display = 'none';
+    }
+  });
+
+  const text=document.getElementById('manageIText'), area=document.getElementById('id_ingredients_text');
+  if(area){area.addEventListener('input',function(){text.textContent=this.value||'—'});}
+})();
+</script>
+{% endblock %}

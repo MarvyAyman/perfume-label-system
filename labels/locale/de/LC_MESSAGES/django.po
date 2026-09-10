@@ -1,0 +1,320 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: perfume-labels 1.0\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Perfume Label System"
+msgstr "Parfüm-Etikettensystem"
+
+msgid "Main printing"
+msgstr "Hauptdruck"
+
+msgid "Products & batches"
+msgstr "Produkte & Chargen"
+
+msgid "Ingredients"
+msgstr "Inhaltsstoffe"
+
+msgid "Reports & records"
+msgstr "Berichte & Aufzeichnungen"
+
+msgid "Log out"
+msgstr "Abmelden"
+
+msgid "Log in"
+msgstr "Anmelden"
+
+msgid "Sign in to open the printing system."
+msgstr "Melden Sie sich an, um das Drucksystem zu öffnen."
+
+msgid "Incorrect username or password."
+msgstr "Benutzername oder Passwort ist falsch."
+
+msgid "Username"
+msgstr "Benutzername"
+
+msgid "Password"
+msgstr "Passwort"
+
+msgid "System ready"
+msgstr "System bereit"
+
+msgid "Choose a perfume — its batch and ingredients load automatically."
+msgstr "Parfüm auswählen — Charge und Inhaltsstoffe werden automatisch geladen."
+
+msgid "Choose perfume & print"
+msgstr "Parfüm auswählen & drucken"
+
+msgid "Perfume name"
+msgstr "Parfümname"
+
+msgid "Type the perfume name…"
+msgstr "Parfümnamen eingeben…"
+
+msgid "Oil batch number — automatic"
+msgstr "Öl-Chargennummer — automatisch"
+
+msgid "Appears once a perfume is selected"
+msgstr "Erscheint nach Auswahl eines Parfüms"
+
+msgid "Number of bottles"
+msgstr "Anzahl der Flaschen"
+
+msgid "Note (optional — prints only under the ingredients label)"
+msgstr "Notiz (optional — wird nur unter dem Inhaltsstoffe-Etikett gedruckt)"
+
+msgid "Leave empty for nothing to print here…"
+msgstr "Leer lassen, damit hier nichts gedruckt wird…"
+
+msgid "Pick a registered perfume from the search results. Its current batch number is filled in automatically."
+msgstr "Wählen Sie ein registriertes Parfüm aus den Suchergebnissen. Die aktuelle Chargennummer wird automatisch eingetragen."
+
+msgid "Print tracking label"
+msgstr "Trackingetikett drucken"
+
+msgid "Print ingredients label"
+msgstr "Inhaltsstoffe-Etikett drucken"
+
+msgid "Printer 1"
+msgstr "Drucker 1"
+
+msgid "Printer 2"
+msgstr "Drucker 2"
+
+msgid "Preview"
+msgstr "Vorschau"
+
+msgid "Ingredients not added yet."
+msgstr "Inhaltsstoffe noch nicht hinzugefügt."
+
+msgid "The preview changes depending on which print button you choose."
+msgstr "Die Vorschau ändert sich je nach gewähltem Druckbutton."
+
+msgid "This perfume today"
+msgstr "Dieses Parfüm heute"
+
+msgid "This perfume this month"
+msgstr "Dieses Parfüm diesen Monat"
+
+msgid "All perfumes today"
+msgstr "Alle Parfüms heute"
+
+msgid "All perfumes this month"
+msgstr "Alle Parfüms diesen Monat"
+
+msgid "Choose a perfume from the search results first."
+msgstr "Wählen Sie zuerst ein Parfüm aus den Suchergebnissen."
+
+msgid "Current batch"
+msgstr "Aktuelle Charge"
+
+msgid "Add each perfume and link it to the current oil batch."
+msgstr "Fügen Sie jedes Parfüm hinzu und verknüpfen Sie es mit der aktuellen Ölcharge."
+
+msgid "Add a new perfume"
+msgstr "Neues Parfüm hinzufügen"
+
+msgid "Edit"
+msgstr "Bearbeiten"
+
+msgid "Save perfume"
+msgstr "Parfüm speichern"
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Batches"
+msgstr "Chargen"
+
+msgid "New EZLOT batch number"
+msgstr "Neue EZLOT-Chargennummer"
+
+msgid "Add batch"
+msgstr "Charge hinzufügen"
+
+msgid "Active"
+msgstr "Aktiv"
+
+msgid "Make active"
+msgstr "Aktivieren"
+
+msgid "No batches yet."
+msgstr "Noch keine Chargen."
+
+msgid "Registered perfumes"
+msgstr "Registrierte Parfüms"
+
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+msgid "Disable"
+msgstr "Deaktivieren"
+
+msgid "Enable"
+msgstr "Aktivieren"
+
+msgid "No products yet."
+msgstr "Noch keine Produkte."
+
+msgid "Disabling a perfume hides it from the print screen but keeps all of its past tracking records."
+msgstr "Das Deaktivieren eines Parfüms blendet es vom Druckbildschirm aus, alle bisherigen Trackingdaten bleiben erhalten."
+
+msgid "Perfume ingredients"
+msgstr "Parfüm-Inhaltsstoffe"
+
+msgid "Keep one current ingredients list per perfume."
+msgstr "Führen Sie pro Parfüm eine aktuelle Liste der Inhaltsstoffe."
+
+msgid "Add or edit ingredients"
+msgstr "Inhaltsstoffe hinzufügen oder bearbeiten"
+
+msgid "Choose perfume"
+msgstr "Parfüm auswählen"
+
+msgid "Ingredients text as it will be printed"
+msgstr "Text der Inhaltsstoffe, wie er gedruckt wird"
+
+msgid "Save ingredients"
+msgstr "Inhaltsstoffe speichern"
+
+msgid "Choose a perfume above to edit its ingredients."
+msgstr "Wählen Sie oben ein Parfüm aus, um dessen Inhaltsstoffe zu bearbeiten."
+
+msgid "Ingredients label preview"
+msgstr "Vorschau des Inhaltsstoffe-Etiketts"
+
+msgid "Enter the legally-approved ingredients list exactly as it should appear on the product file."
+msgstr "Geben Sie die rechtlich genehmigte Liste der Inhaltsstoffe genau so ein, wie sie in der Produktakte erscheinen soll."
+
+msgid "All perfumes & their ingredients"
+msgstr "Alle Parfüms & ihre Inhaltsstoffe"
+
+msgid "Edit ingredients"
+msgstr "Inhaltsstoffe bearbeiten"
+
+msgid "Search permanent tracking records by number, perfume, or batch."
+msgstr "Durchsuchen Sie die dauerhaften Trackingdaten nach Nummer, Parfüm oder Charge."
+
+msgid "Bottles today"
+msgstr "Flaschen heute"
+
+msgid "Bottles this month"
+msgstr "Flaschen diesen Monat"
+
+msgid "Perfumes"
+msgstr "Parfüms"
+
+msgid "Results shown"
+msgstr "Angezeigte Ergebnisse"
+
+msgid "Search tracking records"
+msgstr "Trackingdaten durchsuchen"
+
+msgid "Download CSV (Excel)"
+msgstr "CSV herunterladen (Excel)"
+
+msgid "Tracking number, perfume name, or EZLOT batch…"
+msgstr "Trackingnummer, Parfümname oder EZLOT-Charge…"
+
+msgid "Search"
+msgstr "Suchen"
+
+msgid "Tracking number"
+msgstr "Trackingnummer"
+
+msgid "Perfume"
+msgstr "Parfüm"
+
+msgid "Batch"
+msgstr "Charge"
+
+msgid "Print date"
+msgstr "Druckdatum"
+
+msgid "Reprints"
+msgstr "Nachdrucke"
+
+msgid "No matching records."
+msgstr "Keine passenden Datensätze."
+
+msgid "Reprinting an existing tracking label (from this search) never creates a new tracking number."
+msgstr "Das erneute Drucken eines vorhandenen Trackingetiketts (aus dieser Suche) erzeugt niemals eine neue Trackingnummer."
+
+msgid "This perfume has no active EZLOT batch yet."
+msgstr "Für dieses Parfüm ist noch keine aktive EZLOT-Charge vorhanden."
+
+msgid "Add this perfume's ingredients first."
+msgstr "Fügen Sie zuerst die Inhaltsstoffe dieses Parfüms hinzu."
+
+msgid "Tracking number not found."
+msgstr "Trackingnummer nicht gefunden."
+
+msgid "Batch number must start with EZLOT."
+msgstr "Die Chargennummer muss mit EZLOT beginnen."
+
+msgid "Product saved."
+msgstr "Produkt gespeichert."
+
+msgid "Batch added."
+msgstr "Charge hinzugefügt."
+
+msgid "Active batch updated."
+msgstr "Aktive Charge aktualisiert."
+
+msgid "Ingredients saved for %(name)s"
+msgstr "Inhaltsstoffe gespeichert für %(name)s"
+
+msgid "Tracking printer"
+msgstr "Trackingdrucker"
+
+msgid "Ingredients printer"
+msgstr "Inhaltsstoffe-Drucker"
+
+msgid "Clear records for a date range"
+msgstr "Aufzeichnungen für einen Zeitraum löschen"
+
+msgid "This permanently deletes every tracking record printed in this date range. This cannot be undone. Continue?"
+msgstr "Dadurch werden alle in diesem Zeitraum gedruckten Trackingdaten endgültig gelöscht. Dies kann nicht rückgängig gemacht werden. Fortfahren?"
+
+msgid "From"
+msgstr "Von"
+
+msgid "To"
+msgstr "Bis"
+
+msgid "Delete records in this range"
+msgstr "Aufzeichnungen in diesem Zeitraum löschen"
+
+msgid "Only tracking records are ever affected — nothing else in the system changes."
+msgstr "Es sind ausschließlich Trackingdaten betroffen — nichts anderes im System ändert sich."
+
+msgid "Choose a valid start and end date."
+msgstr "Wählen Sie ein gültiges Start- und Enddatum."
+
+msgid "Deleted %(count)s tracking record(s) from %(start)s to %(end)s."
+msgstr "%(count)s Trackingdatensatz/-sätze vom %(start)s bis %(end)s gelöscht."
+
+msgid "No tracking records found between %(start)s and %(end)s."
+msgstr "Keine Trackingdaten zwischen %(start)s und %(end)s gefunden."
+
+msgid "Export Excel"
+msgstr "Excel exportieren"
+
+msgid "Export Excel with sales report"
+msgstr "Excel mit Verkaufsbericht exportieren"
+
+msgid "Oil batch number (EZLOT...)"
+msgstr "Öl-Chargennummer (EZLOT...)"
+
+msgid "Counter per perfume"
+msgstr "Zähler pro Parfüm"
+
+msgid "Total bottles"
+msgstr "Gesamtzahl Flaschen"
+
+msgid "Clear"
+msgstr "Löschen"
