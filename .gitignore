@@ -16,8 +16,8 @@ env/
 staticfiles/
 media/
 
-# Translation build output
-*.mo
+# # Translation build output
+# *.mo
 
 # Local tooling and OS files
 .vscode/
