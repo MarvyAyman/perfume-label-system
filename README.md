@@ -1,7 +1,7 @@
 # Perfume Label System — Django project
 
 A ready-to-run Django project for perfume label printing. It includes migrations, login, search, printing endpoints, Arabic/English/German translations, session persistence, and reporting.
-
+![sample of website output](screenshots/sample1.jpg)
 ## Local setup
 
 ```bash
